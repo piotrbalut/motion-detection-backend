@@ -30,6 +30,7 @@ namespace MotionDetection.Backend
 			IServiceCollection services)
 		{
 			services.AddDbContext<ApplicationDbContext>();
+			services.AddDbContext<CameraDbContext>();
 
 			services.Configure<PlivoAuth>(Configuration.GetSection("PlivoAuth"));
 			services.Configure<PlivoSettings>(Configuration.GetSection("PlivoSettings"));

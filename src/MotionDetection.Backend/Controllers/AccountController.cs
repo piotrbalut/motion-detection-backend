@@ -1,21 +1,23 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using MotionDetection.Backend.Entities;
 using MotionDetection.Backend.Interfaces.Services;
+using MotionDetection.Backend.Models.Database;
 using MotionDetection.Backend.Models.Dto;
 using MotionDetection.Backend.Models.Plivo;
 
 namespace MotionDetection.Backend.Controllers
 {
 	[Route("[controller]/[action]")]
-	public class AccountController : Controller
+	public class AccountController : BaseController
 	{
-		private readonly IJwtService _jwtService;
 		private readonly SignInManager<IdentityUser> _signInManager;
+		private readonly IJwtService _jwtService;
 		private readonly ISmsService _smsService;
-		private readonly UserManager<IdentityUser> _userManager;
 
 		public AccountController(
 			UserManager<IdentityUser> userManager,
@@ -23,9 +25,8 @@ namespace MotionDetection.Backend.Controllers
 			IOptions<PlivoAuth> jwtAuthentication,
 			IJwtService jwtService,
 			ISmsService smsService
-		)
+		) : base(userManager)
 		{
-			_userManager = userManager;
 			_signInManager = signInManager;
 			_jwtService = jwtService;
 			_smsService = smsService;
@@ -39,7 +40,7 @@ namespace MotionDetection.Backend.Controllers
 
 			if (result.Succeeded)
 			{
-				var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
+				var appUser = UserManager.Users.SingleOrDefault(r => r.Email == model.Email);
 				return await _jwtService.GenerateTokenAsync(model.Email, appUser);
 			}
 
@@ -50,20 +51,39 @@ namespace MotionDetection.Backend.Controllers
 		public async Task<object> Register(
 			[FromBody] RegisterDto model)
 		{
-			var user = new IdentityUser
+			using (var db = new CameraDbContext())
 			{
-				UserName = model.Email,
-				Email = model.Email
-			};
+				db.Locations.Add(
+					new Location()
+					{
+						Name = "Home",
+						Cameras = new List<Camera>()
+						{
+							new Camera() {Title = "1"},
+							new Camera() {Title = "2"}
+						}
+					});
+				var count = db.SaveChanges();
 
-			var result = await _userManager.CreateAsync(user);
-
-			if (result.Succeeded)
-			{
-				await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-				await _signInManager.SignInAsync(user, false);
-				return Ok();
+				foreach (var camera in db.Cameras)
+				{
+				}
 			}
+
+			//var user = new IdentityUser
+			//{
+			//	UserName = model.Email,
+			//	Email = model.Email
+			//};
+
+			//var result = await _userManager.CreateAsync(user);
+
+			//if (result.Succeeded)
+			//{
+			//	await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+			//	await _signInManager.SignInAsync(user, false);
+			//	return Ok();
+			//}
 
 			return StatusCode(500);
 		}
@@ -78,7 +98,7 @@ namespace MotionDetection.Backend.Controllers
 				Email = model.Email
 			};
 
-			var result = await _userManager.CreateAsync(user, model.PhoneNumber);
+			var result = await UserManager.CreateAsync(user, model.PhoneNumber);
 
 			if (result.Succeeded)
 			{
