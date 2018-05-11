@@ -19,7 +19,7 @@ namespace MotionDetection.Backend.Controllers
 
 		// GET api/cameras
 		public CamerasController(
-			UserManager<IdentityUser> userManager,
+			UserManager<User> userManager,
 			CameraDbContext cameraDbContext)
 			: base(userManager)
 		{
@@ -30,9 +30,9 @@ namespace MotionDetection.Backend.Controllers
 		[HttpGet]
 		public async Task<IEnumerable<CameraDto>> Get()
 		{
-			Mapper.Initialize(cfg => cfg.CreateMap<Camera, CameraDto>());
-			var cameras = _cameraDbContext.Cameras.ToArray();
-			return Mapper.Map<CameraDto[]>(cameras);
+			//Mapper.Initialize(cfg => cfg.CreateMap<Camera, CameraDto>());
+			//var cameras = _cameraDbContext.Cameras.ToArray();
+			return Mapper.Map<CameraDto[]>(null);
 		}
 
 		// GET api/cameras/5

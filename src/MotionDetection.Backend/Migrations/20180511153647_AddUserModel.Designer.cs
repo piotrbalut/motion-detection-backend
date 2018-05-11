@@ -11,9 +11,10 @@ using System;
 namespace MotionDetection.Backend.Migrations
 {
     [DbContext(typeof(CameraDbContext))]
-    partial class CameraDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180511153647_AddUserModel")]
+    partial class AddUserModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,19 +207,6 @@ namespace MotionDetection.Backend.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("MotionDetection.Backend.Models.Database.UserCamera", b =>
-                {
-                    b.Property<string>("UserId");
-
-                    b.Property<int>("CameraId");
-
-                    b.HasKey("UserId", "CameraId");
-
-                    b.HasIndex("CameraId");
-
-                    b.ToTable("UserCamera");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole")
@@ -269,19 +257,6 @@ namespace MotionDetection.Backend.Migrations
                     b.HasOne("MotionDetection.Backend.Models.Database.Location", "Location")
                         .WithMany("Cameras")
                         .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("MotionDetection.Backend.Models.Database.UserCamera", b =>
-                {
-                    b.HasOne("MotionDetection.Backend.Models.Database.Camera", "Camera")
-                        .WithMany("UserCameras")
-                        .HasForeignKey("CameraId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("MotionDetection.Backend.Models.Database.User", "User")
-                        .WithMany("UserCameras")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

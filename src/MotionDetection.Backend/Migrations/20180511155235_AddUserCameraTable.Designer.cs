@@ -11,9 +11,10 @@ using System;
 namespace MotionDetection.Backend.Migrations
 {
     [DbContext(typeof(CameraDbContext))]
-    partial class CameraDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180511155235_AddUserCameraTable")]
+    partial class AddUserCameraTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

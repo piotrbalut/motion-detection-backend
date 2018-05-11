@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using MotionDetection.Backend.Entities;
 using MotionDetection.Backend.Interfaces.Services;
+using MotionDetection.Backend.Models.Database;
 using MotionDetection.Backend.Models.Jwt;
 using MotionDetection.Backend.Models.Plivo;
 using MotionDetection.Backend.Services;
@@ -29,7 +30,7 @@ namespace MotionDetection.Backend
 		public void ConfigureServices(
 			IServiceCollection services)
 		{
-			services.AddDbContext<ApplicationDbContext>();
+			//services.AddDbContext<ApplicationDbContext>();
 			services.AddDbContext<CameraDbContext>();
 
 			services.Configure<PlivoAuth>(Configuration.GetSection("PlivoAuth"));
@@ -39,8 +40,8 @@ namespace MotionDetection.Backend
 			services.AddSingleton<IJwtService, JwtService>();
 
 			// ===== Add Identity ========
-			services.AddIdentity<IdentityUser, IdentityRole>()
-			        .AddEntityFrameworkStores<ApplicationDbContext>()
+			services.AddIdentity<User, IdentityRole>()
+			        .AddEntityFrameworkStores<CameraDbContext>()
 			        .AddDefaultTokenProviders();
 
 			JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
@@ -72,7 +73,7 @@ namespace MotionDetection.Backend
 		public void Configure(
 			IApplicationBuilder app,
 			IHostingEnvironment env,
-			ApplicationDbContext dbContext
+			CameraDbContext dbContext
 		)
 		{
 			if (env.IsDevelopment())
@@ -85,7 +86,8 @@ namespace MotionDetection.Backend
 			app.UseMvc();
 
 			// ===== Create tables ======
-			dbContext.Database.EnsureCreated();
+			//https://stackoverflow.com/questions/35797628/ef7-generates-wrong-migrations-with-sqlite
+			//dbContext.Database.EnsureCreated();
 		}
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace MotionDetection.Backend.Models.Database
+﻿using System.Collections.Generic;
+
+namespace MotionDetection.Backend.Models.Database
 {
 	public class Camera
 	{
@@ -7,5 +9,7 @@
 		public string Description { get; set; }
 		public int LocationId { get; set; }
 		public Location Location { get; set; }
-	}
+		public virtual ICollection<UserCamera> UserCameras { get; set; }
+
+    }
 }

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MotionDetection.Backend.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class AddCamerasAndLocations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

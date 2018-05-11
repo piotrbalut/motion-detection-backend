@@ -15,13 +15,13 @@ namespace MotionDetection.Backend.Controllers
 	[Route("[controller]/[action]")]
 	public class AccountController : BaseController
 	{
-		private readonly SignInManager<IdentityUser> _signInManager;
+		private readonly SignInManager<User> _signInManager;
 		private readonly IJwtService _jwtService;
 		private readonly ISmsService _smsService;
 
 		public AccountController(
-			UserManager<IdentityUser> userManager,
-			SignInManager<IdentityUser> signInManager,
+			UserManager<User> userManager,
+			SignInManager<User> signInManager,
 			IOptions<PlivoAuth> jwtAuthentication,
 			IJwtService jwtService,
 			ISmsService smsService
@@ -51,49 +51,48 @@ namespace MotionDetection.Backend.Controllers
 		public async Task<object> Register(
 			[FromBody] RegisterDto model)
 		{
-			using (var db = new CameraDbContext())
-			{
-				db.Locations.Add(
-					new Location()
-					{
-						Name = "Home",
-						Cameras = new List<Camera>()
-						{
-							new Camera() {Title = "1"},
-							new Camera() {Title = "2"}
-						}
-					});
-				var count = db.SaveChanges();
+            var user = new User
+            {
+                UserName = model.Email,
+                Email = model.Email
+            };
 
-				foreach (var camera in db.Cameras)
-				{
-				}
-			}
 
-			//var user = new IdentityUser
-			//{
-			//	UserName = model.Email,
-			//	Email = model.Email
-			//};
+			//var result = await UserManager.CreateAsync(user);
 
-			//var result = await _userManager.CreateAsync(user);
+   //         using (var db = new CameraDbContext())
+   //         {
+   //             db.Locations.Add(
+   //                 new Location()
+   //                 {
+   //                     Name = "Home",
+   //                     Cameras = new List<Camera>()
+   //                     {
+   //                         new Camera() {Title = "1"},
+   //                         new Camera() {Title = "2"}
+   //                     }
+   //                 });
+   //             var count = db.SaveChanges();
+			//	//db.Users.UserCameras.
+   //         }
+			
 
-			//if (result.Succeeded)
-			//{
-			//	await _userManager.SetPhoneNumberAsync(user, model.PhoneNumber);
-			//	await _signInManager.SignInAsync(user, false);
-			//	return Ok();
-			//}
+            if (result.Succeeded)
+            {
+                await UserManager.SetPhoneNumberAsync(user, model.PhoneNumber);
+                await _signInManager.SignInAsync(user, false);
+                return Ok();
+            }
 
-			return StatusCode(500);
+            return StatusCode(500);
 		}
 
 		[HttpPost]
 		public async Task<object> Confirm(
 			[FromBody] ConfirmAccountDto model)
 		{
-			var user = new IdentityUser
-			{
+			var user = new User
+            {
 				UserName = model.Email,
 				Email = model.Email
 			};
