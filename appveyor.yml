@@ -1,0 +1,10 @@
+version: 1.0.{build}
+build:
+  verbosity: minimal
+  project: src\MotionDetection.Backend.sln
+  
+# Build worker image (VM template)
+image: Visual Studio 2017
+
+before_build:
+  - nuget restore src\MotionDetection.Backend.sln
