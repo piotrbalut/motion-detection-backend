@@ -1,5 +1,8 @@
-﻿namespace MotionDetection.Backend.Models.Database
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MotionDetection.Backend.Models.Database
 {
+	[Table("UserCameras")]
 	public class UserCamera
 	{
 		public string UserId { get; set; }

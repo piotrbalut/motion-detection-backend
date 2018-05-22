@@ -6,16 +6,22 @@ namespace MotionDetection.Backend.Entities
 {
 	public class CameraDbContext : IdentityDbContext<User>
     {
-        public DbSet<Location> Locations { get; set; }
+		public DbSet<Location> Locations { get; set; }
 		public DbSet<Camera> Cameras { get; set; }
+	    public DbSet<UserCamera> UserCameras { get; set; }
+		public DbSet<AccountCode> AccountCodes { get; set; }
 
-		protected override void OnConfiguring(
+        protected override void OnConfiguring(
 			DbContextOptionsBuilder optionsBuilder)
 			=> optionsBuilder.UseSqlite("Data Source=camera.db");
 
 	    protected override void OnModelCreating(ModelBuilder modelBuilder)
 	    {
 		    base.OnModelCreating(modelBuilder);
+
+		    modelBuilder.Entity<Camera>()
+		           .HasIndex(u => u.Key)
+		           .IsUnique();
 
             modelBuilder.Entity<UserCamera>()
 		                .HasKey(pc => new { pc.UserId, pc.CameraId });

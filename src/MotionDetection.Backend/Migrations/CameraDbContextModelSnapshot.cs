@@ -17,7 +17,7 @@ namespace MotionDetection.Backend.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.0.2-rtm-10011");
+                .HasAnnotation("ProductVersion", "2.0.3-rtm-10026");
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
@@ -126,6 +126,24 @@ namespace MotionDetection.Backend.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("MotionDetection.Backend.Models.Database.AccountCode", b =>
+                {
+                    b.Property<int>("AccountCodeId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Code");
+
+                    b.Property<DateTime?>("DateOfUse");
+
+                    b.Property<string>("Email");
+
+                    b.Property<DateTime>("ValidTo");
+
+                    b.HasKey("AccountCodeId");
+
+                    b.ToTable("AccountCodes");
+                });
+
             modelBuilder.Entity("MotionDetection.Backend.Models.Database.Camera", b =>
                 {
                     b.Property<int>("CameraId")
@@ -133,11 +151,16 @@ namespace MotionDetection.Backend.Migrations
 
                     b.Property<string>("Description");
 
+                    b.Property<string>("Key");
+
                     b.Property<int>("LocationId");
 
                     b.Property<string>("Title");
 
                     b.HasKey("CameraId");
+
+                    b.HasIndex("Key")
+                        .IsUnique();
 
                     b.HasIndex("LocationId");
 
@@ -149,7 +172,13 @@ namespace MotionDetection.Backend.Migrations
                     b.Property<int>("LocationId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Description");
+
+                    b.Property<double>("Latitude");
+
+                    b.Property<double>("Longitude");
+
+                    b.Property<string>("Title");
 
                     b.HasKey("LocationId");
 
@@ -216,7 +245,7 @@ namespace MotionDetection.Backend.Migrations
 
                     b.HasIndex("CameraId");
 
-                    b.ToTable("UserCamera");
+                    b.ToTable("UserCameras");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
