@@ -35,13 +35,13 @@ namespace MotionDetection.Backend.Services
 				new Claim(ClaimTypes.NameIdentifier, user.Id)
 			};
 
-			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthentication.Value.SecurityKey));
+			var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtAuthentication.Value.JwtKey));
 			var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 			var expires = DateTime.Now.AddDays(Convert.ToDouble(_jwtAuthentication.Value.JwtExpireDays));
 
 			var token = new JwtSecurityToken(
-					_jwtAuthentication.Value.ValidIssuer,
-					_jwtAuthentication.Value.ValidIssuer,
+					_jwtAuthentication.Value.JwtIssuer,
+					_jwtAuthentication.Value.JwtIssuer,
 					claims,
 					expires: expires,
 					signingCredentials: creds
