@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.PlatformAbstractions;
 using Microsoft.IdentityModel.Tokens;
 using MotionDetection.Backend.Entities;
 using MotionDetection.Backend.Interfaces.Resources;
@@ -20,6 +21,7 @@ using MotionDetection.Backend.Models.Jwt;
 using MotionDetection.Backend.Models.Mailgun;
 using MotionDetection.Backend.Models.Plivo;
 using MotionDetection.Backend.Services;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace MotionDetection.Backend
 {
@@ -32,7 +34,11 @@ namespace MotionDetection.Backend
 		private const string ConfigurationJwtAuthenticationIssuerKey = "JwtAuthentication:JwtIssuer";
 		private const string ConfigurationJwtAuthenticationKeyKey = "JwtAuthentication:JwtKey";
 		private const string DefaultRequestCulture = "en-US";
-		private const bool AcceptLanguageHeaderRequestCultureProvider = false;
+		private const string SwaggerVersion1 = "v1";
+		private const string DefaultSwaggerUiEndpoint = "/swagger/" + SwaggerVersion1 + "/swagger.json";
+		private const string DefaultSwaggerName = "MotionDetection " + SwaggerVersion1;
+		private const string XmlCommentsName = "MotionDetection.Backend.xml";
+        private const bool AcceptLanguageHeaderRequestCultureProvider = false;
 
 		private readonly CultureInfo[] _supportedCultures =
 		{
@@ -104,7 +110,17 @@ namespace MotionDetection.Backend
 				});
 
 			services.AddMvc();
-		}
+			services.AddSwaggerGen(c =>
+			{
+				c.SwaggerDoc(SwaggerVersion1, new Info
+				{
+					Version = SwaggerVersion1,
+					Title = DefaultSwaggerName
+                });
+				c.IncludeXmlComments(GetXmlCommentsPath());
+				c.DescribeAllEnumsAsStrings();
+			});
+        }
 
 		private void ConfigureDbContexts(IServiceCollection services)
 			=> services.AddDbContext<CameraDbContext>();
@@ -147,11 +163,22 @@ namespace MotionDetection.Backend
 			}
 
 			app.UseMvc();
+			app.UseSwagger();
+			app.UseSwaggerUI(c =>
+			{
+				c.SwaggerEndpoint(DefaultSwaggerUiEndpoint, DefaultSwaggerName);
+			});
+			
+            //https://stackoverflow.com/questions/35797628/ef7-generates-wrong-migrations-with-sqlite
+            //dbContext.Database.EnsureCreated();
+            //Init database
+            //DbInitializer.Initialize(dbContext);
+        }
 
-			//https://stackoverflow.com/questions/35797628/ef7-generates-wrong-migrations-with-sqlite
-			//dbContext.Database.EnsureCreated();
-			//Init database
-			//DbInitializer.Initialize(dbContext);
+		private string GetXmlCommentsPath()
+		{
+			var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+			return System.IO.Path.Combine(basePath, XmlCommentsName);
 		}
-	}
+    }
 }

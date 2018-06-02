@@ -47,6 +47,11 @@ namespace MotionDetection.Backend.Controllers
 			_mailService = mailService;
 		}
 
+		/// <summary>
+        /// Method to login.
+        /// </summary>
+        /// <param name="model">Email and password do login</param>
+        /// <returns>Token to authorize</returns>
 		[HttpPost]
 		public async Task<object> Login(
 			[FromBody] LoginDto model)
@@ -62,7 +67,12 @@ namespace MotionDetection.Backend.Controllers
 			return StatusCode(500);
 		}
 
-		[HttpPost]
+        /// <summary>
+        /// Method to set password and confirm account. It replace classic register method.
+        /// </summary>
+        /// <param name="model">Account email, password and confirmation code</param>
+        /// <returns>Token to authorize</returns>
+        [HttpPost]
 		public async Task<object> Confirm(
 			[FromBody] AccountConfirmationDto model)
 		{
@@ -120,6 +130,11 @@ namespace MotionDetection.Backend.Controllers
 			}
 		}
 
+		/// <summary>
+        /// Method to retrive confirmation code
+        /// </summary>
+        /// <param name="model">Email</param>
+        /// <returns></returns>
 		[HttpPost]
 		public async Task<object> ConfirmationToken(
 			[FromBody] AccountConfirmationCodeDto model)
